@@ -74,11 +74,23 @@ export default {
         this.mares[marAEditar].nombre = this.mar;
         this.mares[marAEditar].continente = this.continente;
       } else {
-        this.mares.push({
+        let mar = {
           id: this.initialId++,
           nombre: this.mar,
           continente: this.continente,
-        });
+        };
+
+        fetch("https://602c39a330ba720017222cb2.mockapi.io/api/mares", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(mar),
+        })
+          .then((resp) => resp.json())
+          .then((data) => {
+            this.mares.push(data);
+          });
       }
       this.resetForm();
     },
@@ -90,10 +102,19 @@ export default {
       this.isEdit = false;
     },
     eliminarMar(id) {
-      this.mares.splice(
-        this.mares.findIndex((m) => m.id === id),
-        1
-      );
+      fetch(
+        "https://602c39a330ba720017222cb2.mockapi.io/api/mares" + "/" + id,
+        {
+          method: "DELETE",
+        }
+      )
+        .then((resp) => resp.json())
+        .then(() => {
+          this.mares.splice(
+            this.mares.findIndex((m) => m.id === id),
+            1
+          );
+        });
     },
     editarMar(mar) {
       this.mar = mar.nombre;
